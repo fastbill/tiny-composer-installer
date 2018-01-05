@@ -1,0 +1,13 @@
+{
+    "name": "fastbill/tiny-composer-installer",
+    "description": "A lot smaller than the official Composer installer, but not less secure.",
+    "type": "project",
+    "license": "Unlicense",
+    "require": {},
+    "require-dev": {
+        "phpunit/phpunit": "^6"
+    },
+    "scripts": {
+        "test": "phpunit"
+    }
+}

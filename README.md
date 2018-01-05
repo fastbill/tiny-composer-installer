@@ -1,4 +1,4 @@
-# Tiny Composer Installer
+# Tiny Composer Installer [![Build Status](https://travis-ci.org/fastbill/tiny-composer-installer.svg?branch=master)](https://travis-ci.org/fastbill/tiny-composer-installer)
 
 This is a small, simple and easily auditable tool that downloads [Composer](https://getcomposer.org/), checks its signature and saves it to an executable file. It is designed to be small enough to be committed into your project’s repository to safely bootstrap Composer, which is especially useful in a `Dockerfile`.
 

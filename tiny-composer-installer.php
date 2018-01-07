@@ -137,6 +137,8 @@ function write_phar($phar, $default_filename)
     if (!file_put_contents($file, $phar)) {
         throw new \RuntimeException("could not write PHAR to $file");
     }
-    chmod($file, 0755);
+    if (!chmod($file, 0755)) {
+        trigger_error('could not chmod() output file to be executable', E_USER_WARNING);
+    }
     return realpath($file);
 }

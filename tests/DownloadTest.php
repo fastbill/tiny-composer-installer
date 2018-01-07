@@ -55,7 +55,7 @@ class DownloadTest extends \PHPUnit\Framework\TestCase
         return static::execute(implode(' ', array_merge([
             'php',
             escapeshellarg(__DIR__ . '/../tiny-composer-installer.php'),
-        ], $params)));
+        ], array_map('escapeshellarg', $params))));
     }
 
     /**
@@ -64,7 +64,7 @@ class DownloadTest extends \PHPUnit\Framework\TestCase
     public function testTinyAndOfficialDownloadTheSameComposer()
     {
         $tinyFile = tempnam(sys_get_temp_dir(), 'tiny-composer-');
-        $result = static::executeTCI([escapeshellarg($tinyFile)]);
+        $result = static::executeTCI([$tinyFile]);
         $this->assertSame(0, $result['rc'], 'Tiny installer failed.');
         $this->assertFileEquals(static::$officialComposer, $tinyFile, 'Tiny installer downloads a different file');
         unlink($tinyFile);

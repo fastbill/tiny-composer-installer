@@ -19,7 +19,7 @@ RUN php tiny-composer-installer.php /usr/local/bin/composer \
 ## Requirements and limitations
 
 * We haven’t tested this tool in a lot of different environments yet. If it doesn’t work for you, please tell us. However, we don’t aim to support every possible environment.
-* [`allow_url_fopen`](http://php.net/manual/en/filesystem.configuration.php#ini.allow-url-fopen) and the [OpenSSL extension](http://php.net/manual/en/book.openssl.php) need to be available/enabled.
+* [`allow_url_fopen`](https://secure.php.net/manual/en/filesystem.configuration.php#ini.allow-url-fopen) and the [OpenSSL extension](https://secure.php.net/manual/en/book.openssl.php) need to be available/enabled.
 * You need PHP 5.3.2 to run Composer. Tiny Composer Installer doesn’t check for that. The installer itself requires at least PHP 5.2.
 
 ## Installation
@@ -45,7 +45,7 @@ Wouldn’t it be nice if the installer wasn’t so large, so you could actually 
 
 You can pass a destination filename as a parameter. Please note that if the download and signature checks succeed, the file will be overwritten without asking. If you don’t supply a filename, `composer.phar` in the current directory will be used.
 
-Whether you supplied a parameter or not, when Tiny Composer Installer succeeds it will echo the [`realpath()`](http://php.net/manual/en/function.realpath.php) of the destination filename to standard output and return with an exit code of zero. On error, stdout will be empty and a non-zero error code will be returned. This allows you to do something like this:
+Whether you supplied a parameter or not, when Tiny Composer Installer succeeds it will echo the [`realpath()`](https://secure.php.net/manual/en/function.realpath.php) of the destination filename to standard output and return with an exit code of zero. On error, stdout will be empty and a non-zero error code will be returned. This allows you to do something like this:
 
 ```bash
 phar="$(php tiny-composer-installer.php "$(mktemp -t)")" && php "$phar" install && rm "$phar"

@@ -51,6 +51,8 @@ Whether you supplied a parameter or not, when Tiny Composer Installer succeeds i
 phar="$(php tiny-composer-installer.php "$(mktemp -t)")" && php "$phar" install && rm "$phar"
 ```
 
+(Please note that this example requires GNU `mktemp` and won’t work on macOS or BSD.)
+
 If that’s too fancy for you, this is how you install Composer globally to `/usr/local/bin`:
 
 ```bash

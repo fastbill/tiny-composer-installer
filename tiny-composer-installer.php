@@ -9,6 +9,7 @@
 
 $my_version = '0.1.0';
 $base_url = 'https://getcomposer.org';
+$default_filename = 'composer.phar';
 
 // Retrieved from <https://composer.github.io/pubkeys.html>, only valid for tagged releases.
 $signature_key = <<<END
@@ -39,12 +40,12 @@ usage: tiny-composer-installer.php [filename]
 version: {$my_version}
 
 Download Composer, check the download against a hardcoded signature key and save
-it to a file. The filename parameter is optional, if you don't supply one, a
-temp file will be used.
+it to a file. The filename parameter is optional. If you don't supply one, the
+name {$default_filename} will be used.
 
-On success, the file name will be written to stdout, for easy handling in
-scripts. On failure, nothing will be written to stdout, the return code will be
-non-zero and there will be an error message in stderr.
+On success, the absolute file name will be written to stdout, in case you need
+that in a script. On failure, nothing will be written to stdout, the return code
+will be non-zero and there will be an error message in stderr.
 
 Please note that the output file will be overwritten without asking, but only if
 the download and signature check were successful.
@@ -60,7 +61,7 @@ $version = select_version(fetch_versions($base_url), 'stable');
 $phar = fetch_phar($base_url, $version);
 $signature = fetch_signature($base_url, $version);
 check_signature($phar, $signature, $signature_key);
-echo write_phar($phar) . PHP_EOL;
+echo write_phar($phar, $default_filename) . PHP_EOL;
 
 function check_signature($subj, $sig, $key)
 {
@@ -130,12 +131,14 @@ function select_version($versions, $channel)
     return $version[0];
 }
 
-function write_phar($phar)
+function write_phar($phar, $default_filename)
 {
-    $file = ($_SERVER['argc'] >= 2) ? $_SERVER['argv'][1] : tempnam(sys_get_temp_dir(), 'composer-');
+    $file = ($_SERVER['argc'] >= 2) ? $_SERVER['argv'][1] : $default_filename;
     if (!file_put_contents($file, $phar)) {
         throw new \RuntimeException("could not write PHAR to $file");
     }
-    chmod($file, 0755);
-    return $file;
+    if (!chmod($file, 0755)) {
+        trigger_error('could not chmod() output file to be executable', E_USER_WARNING);
+    }
+    return realpath($file);
 }

@@ -4,7 +4,7 @@ This is a small, simple and easily auditable tool that downloads [Composer](http
 
 ## Give me the tl;dr.
 
-As soon as you’ve downloaded `tiny-composer-installer.php`, run `php tiny-composer-installer.php composer.phar` to get the current stable version of Composer saved to `composer.phar`.
+As soon as you’ve downloaded `tiny-composer-installer.php`, run `php tiny-composer-installer.php` to get the current stable version of Composer saved to `composer.phar` in the current directory.
 
 When you’re using a `Dockerfile` based on [the official PHP images](https://hub.docker.com/_/php/), you can do it like this:
 
@@ -19,7 +19,7 @@ RUN php tiny-composer-installer.php /usr/local/bin/composer \
 ## Requirements and limitations
 
 * We haven’t tested this tool in a lot of different environments yet. If it doesn’t work for you, please tell us. However, we don’t aim to support every possible environment.
-* [`allow_url_fopen`](http://php.net/manual/en/filesystem.configuration.php#ini.allow-url-fopen) and the [OpenSSL extension](http://php.net/manual/en/book.openssl.php) need to be available/enabled.
+* [`allow_url_fopen`](https://secure.php.net/manual/en/filesystem.configuration.php#ini.allow-url-fopen) and the [OpenSSL extension](https://secure.php.net/manual/en/book.openssl.php) need to be available/enabled.
 * You need PHP 5.3.2 to run Composer. Tiny Composer Installer doesn’t check for that. The installer itself requires at least PHP 5.2.
 
 ## Installation
@@ -43,15 +43,17 @@ Wouldn’t it be nice if the installer wasn’t so large, so you could actually 
 
 ## Usage
 
-You can pass a destination filename as a parameter. Please note that if the download and signature checks succeed, the file will be overwritten without asking. If you don’t supply a filename, a random one in your system’s temp directory will be generated.
+You can pass a destination filename as a parameter. Please note that if the download and signature checks succeed, the file will be overwritten without asking. If you don’t supply a filename, `composer.phar` in the current directory will be used.
 
-Whether you supplied a parameter or not, when Tiny Composer Installer succeeds it will echo the destination filename to standard output and return with an exit code of zero. On error, stdout will be empty and a non-zero error code will be returned. This allows you to do something like this:
+Whether you supplied a parameter or not, when Tiny Composer Installer succeeds it will echo the [`realpath()`](https://secure.php.net/manual/en/function.realpath.php) of the destination filename to standard output and return with an exit code of zero. On error, stdout will be empty and a non-zero error code will be returned. This allows you to do something like this:
 
 ```bash
-phar="$(php tiny-composer-installer.php)" && php "$phar" install && rm "$phar"
+phar="$(php tiny-composer-installer.php "$(mktemp -t)")" && php "$phar" install && rm "$phar"
 ```
 
-If that’s too fancy for you, this is how you install Composer globally to `/usr/local/bin`.
+(Please note that this example requires GNU `mktemp` and won’t work on macOS or BSD.)
+
+If that’s too fancy for you, this is how you install Composer globally to `/usr/local/bin`:
 
 ```bash
 sudo php tiny-composer-installer.php /usr/local/bin/composer

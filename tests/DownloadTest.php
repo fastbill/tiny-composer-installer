@@ -50,20 +50,50 @@ class DownloadTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
+    protected static function executeTCI(array $params)
+    {
+        return static::execute(implode(' ', array_merge([
+            'php',
+            escapeshellarg(__DIR__ . '/../tiny-composer-installer.php'),
+        ], array_map('escapeshellarg', $params))));
+    }
+
     /**
      * @medium
      */
     public function testTinyAndOfficialDownloadTheSameComposer()
     {
         $tinyFile = tempnam(sys_get_temp_dir(), 'tiny-composer-');
-        $result = static::execute(implode(' ', [
-            'php',
-            escapeshellarg(__DIR__ . '/../tiny-composer-installer.php'),
-            escapeshellarg($tinyFile),
-        ]));
+        $result = static::executeTCI([$tinyFile]);
         $this->assertSame(0, $result['rc'], 'Tiny installer failed.');
         $this->assertFileEquals(static::$officialComposer, $tinyFile, 'Tiny installer downloads a different file');
         unlink($tinyFile);
+    }
+
+    /**
+     * @medium
+     */
+    public function testDefaultOutputFilename()
+    {
+        $default = 'composer.phar';
+        $this->assertFileNotExists($default, "$default already exists -- test environment clean?");
+        $result = static::executeTCI([]);
+        $this->assertSame(0, $result['rc'], 'TCI failed.');
+        $this->assertSame(realpath($default), $result['out'][0], "TCI didn't write to $default.");
+        unlink($default);
+    }
+
+    /**
+     * @medium
+     */
+    public function testRelativeOutputFilename()
+    {
+        $destination = sprintf('composer.%d.phar', time());
+        $this->assertFileNotExists($destination, "$destination already exists -- test environment clean?");
+        $result = static::executeTCI([$destination]);
+        $this->assertSame(0, $result['rc'], 'TCI failed.');
+        $this->assertSame(realpath($destination), $result['out'][0], "TCI didn't write to $destination.");
+        unlink($destination);
     }
 
 }
